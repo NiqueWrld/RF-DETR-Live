@@ -26,10 +26,16 @@ jobs:
         sudo sh get-docker.sh
         sudo usermod -aG docker $USER
 
-    - name: Build APK with Buildozer (Docker)
+    - name: Build APK with Custom Docker Image
       run: |
-        docker run --rm -v ${{ github.workspace }}:/app \
-          kivy/buildozer:v1.0.0 bash -c "cd /app && buildozer android debug"
+        docker run --rm -v ${{ github.workspace }}:/app python:3.8 bash -c "
+          apt update && apt install -y python3-pip python3-setuptools python3-dev \
+          build-essential git libssl-dev libffi-dev libmysqlclient-dev \
+          && pip install --upgrade pip && pip install buildozer
+          && apt install -y libgl1-mesa-glx libmtdev1 libjpeg-dev \
+          libncurses5 libncurses5-dev zlib1g-dev
+          && cd /app && buildozer android debug
+        "
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
