@@ -28,7 +28,7 @@ jobs:
 
     - name: Build APK with Custom Docker Image
       run: |
-        docker run --rm -v ${{ github.workspace }}:/app python:3.8 bash -c "
+        docker run --rm -e BUILDOZER_ALLOW_ROOT=1 -v ${{ github.workspace }}:/app python:3.8 bash -c "
           apt update && apt install -y python3-pip python3-setuptools python3-dev \
           build-essential git libssl-dev libffi-dev \
           libmariadb-dev libgl1-mesa-glx libmtdev1 libjpeg-dev \
