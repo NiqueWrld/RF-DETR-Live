@@ -36,7 +36,7 @@ jobs:
             libmariadb-dev libgl1-mesa-glx libmtdev1 libjpeg-dev \
             libncurses5 libncurses5-dev zlib1g-dev && \
             pip install --upgrade pip && pip install buildozer && \
-            cd /app && buildozer android debug
+            cd /app && echo 'y' | buildozer android debug
           "
 
     - name: Upload APK
