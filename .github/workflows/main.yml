@@ -1,4 +1,4 @@
-name: Build APK from app.py
+name: 📦 Build Android APK from app.py
 
 on:
   push:
@@ -6,40 +6,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: 🛒 Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          apt-transport-https \
-          ca-certificates \
-          curl \
-          gnupg \
-          lsb-release
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
-
-    - name: Build APK with Docker
+    - name: 🐳 Build APK with Docker
       run: |
         docker run --rm \
           -e BUILDOZER_ALLOW_ROOT=1 \
           -v ${{ github.workspace }}:/app \
-          python:3.8 bash -c "
-            apt update && apt install -y python3-pip python3-setuptools python3-dev \
-            build-essential git libssl-dev libffi-dev \
-            libmariadb-dev libgl1-mesa-glx libmtdev1 libjpeg-dev \
-            libncurses5 libncurses5-dev zlib1g-dev && \
-            pip install --upgrade pip && pip install buildozer cython && \
-            cd /app && echo 'y' | buildozer android debug
+          kivy/buildozer bash -c "
+            cd /app && \
+            pip install --upgrade pip && \
+            pip install cython && \
+            echo 'y' | buildozer android debug
           "
 
-    - name: Upload APK
+    - name: ⬆️ Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: myapp-debug-apk
