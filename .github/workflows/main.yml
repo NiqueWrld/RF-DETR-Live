@@ -13,17 +13,21 @@ jobs:
     - name: 🛒 Checkout Repository
       uses: actions/checkout@v3
 
-    - name: 🐳 Build APK with Docker
+    - name: 📦 Install Dependencies
       run: |
-        docker run --rm \
-          -e BUILDOZER_ALLOW_ROOT=1 \
-          -v ${{ github.workspace }}:/app \
-          kivy/buildozer bash -c "
-            cd /app && \
-            pip install --upgrade pip && \
-            pip install cython && \
-            echo 'y' | buildozer android debug
-          "
+        sudo apt-get update
+        sudo apt-get install -y \
+          python3-pip python3-setuptools python3-dev \
+          build-essential git libssl-dev libffi-dev \
+          libmariadb-dev libgl1-mesa-glx libmtdev1 libjpeg-dev \
+          libncurses5 libncurses5-dev zlib1g-dev
+        pip3 install --upgrade pip
+        pip3 install buildozer cython
+
+    - name: 🏗️ Build APK with Buildozer
+      run: |
+        cd ${{ github.workspace }}
+        echo 'y' | buildozer android debug
 
     - name: ⬆️ Upload APK Artifact
       uses: actions/upload-artifact@v4
