@@ -36,13 +36,28 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install chaquopy
+        pip install kivy
+        pip install pyjnius
 
     - name: Build APK
-      run: ./gradlew assembleDebug
+      run: |
+        # Create a basic build spec file for Kivy
+        echo "[app]" > build.spec
+        echo "title = YourApp" >> build.spec
+        echo "package.name = yourapp" >> build.spec
+        echo "package.domain = org.yourdomain" >> build.spec
+        echo "source.include_exts = py,png,jpg,json" >> build.spec
+        echo "[buildozer]" >> build.spec
+        echo "requirements = python3,kivy,pyjnius" >> build.spec
+        echo "android.api = 30" >> build.spec
+        echo "android.ndk = 21b" >> build.spec
+        echo "android.arch = armeabi-v7a" >> build.spec
+
+        # Build the APK
+        buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug.apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: bin/*.apk
