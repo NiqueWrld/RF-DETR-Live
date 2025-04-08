@@ -38,7 +38,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install kivy
         pip install pyjnius
-        pip install buildozer # Install Buildozer
+        pip install buildozer
+        pip install cython # Install Cython
 
     - name: Build APK
       run: |
@@ -49,7 +50,7 @@ jobs:
         echo "package.domain = org.yourdomain" >> build.spec
         echo "source.include_exts = py,png,jpg,json" >> build.spec
         echo "[buildozer]" >> build.spec
-        echo "requirements = python3,kivy,pyjnius" >> build.spec
+        echo "requirements = python3,kivy,pyjnius,cython" >> build.spec # Add Cython to requirements
         echo "android.api = 30" >> build.spec
         echo "android.ndk = 21b" >> build.spec
         echo "android.arch = armeabi-v7a" >> build.spec
