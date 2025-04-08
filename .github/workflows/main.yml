@@ -38,6 +38,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install kivy
         pip install pyjnius
+        pip install buildozer # Install Buildozer
 
     - name: Build APK
       run: |
