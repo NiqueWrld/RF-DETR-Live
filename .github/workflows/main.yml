@@ -1,36 +1,44 @@
-name: 📦 Build Android APK from app.py
+name: Python to APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🛒 Checkout Repository
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: 📦 Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          python3-pip python3-setuptools python3-dev \
-          build-essential git libssl-dev libffi-dev \
-          libmariadb-dev libgl1 libmtdev1 libjpeg-dev \
-          libncurses6 libncurses5-dev zlib1g-dev
-        pip3 install --upgrade pip
-        pip3 install buildozer cython
-
-    - name: 🏗️ Build APK with Buildozer
-      run: |
-        cd ${{ github.workspace }}
-        echo 'y' | buildozer android debug
-
-    - name: ⬆️ Upload APK Artifact
-      uses: actions/upload-artifact@v4
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        name: myapp-debug-apk
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install buildozer cython
+
+    - name: Install system dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential git ccache libncurses5 unzip zlib1g-dev lib32z1 lib32ncurses5 libbz2-1.0 libstdc++6 libssl-dev libffi-dev python3-dev
+
+    - name: Initialize buildozer
+      run: buildozer init
+
+    - name: Build APK
+      run: buildozer -v android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-debug.apk
         path: bin/*.apk
